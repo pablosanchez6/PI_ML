@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from fastapi import FastAPI
 import pandas as pd
 
-df = pd.read_csv(r"ETL\df_complete")
+df = pd.read_csv("df_complete")
 
 app = FastAPI()
 
