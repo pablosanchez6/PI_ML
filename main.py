@@ -37,24 +37,7 @@ def get_max_duration(year: int , platform: str, duration_type: str):
 
  # http://127.0.0.1:8000/get_max_duration/?year=2019&platform=amazon&duration_type=min
 
-@app.get("/get_score_count/{platform}/{scored}/{year}")
-def get_score_count(platform: str, scored: float, year: int):
-    # Seleccionar los registros que corresponden al año y al puntaje especificado
-    df_filtered = df.loc[(df['release_year'] == year) & (df['scored'] > scored)]
-    
-    # Filtrar los registros para obtener solo las películas
-    df_movies = df_filtered.loc[df['type'] == 'movie']
-    
-    # Filtrar los registros para obtener solo las películas que no son documentales
-    df_no_doc = df_movies[~df_movies['listed_in'].str.contains('documentary', regex=False)]
-    
-    # Filtrar los registros para obtener solo las películas que se encuentran en la plataforma especificada
-    df_platform = df_no_doc.loc[df['platform'] == platform]
-    
-    # Contar el número de registros que cumplen los criterios anteriores
-    count = len(df_platform)
-    
-    return count
+ 
 
 
 @app.get("/get_count_platform/{platform}")
