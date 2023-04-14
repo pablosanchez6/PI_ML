@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from fastapi import FastAPI
 import pandas as pd
 import numpy as np
-from scikit_learn import sklearn
+import sklearn
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 
