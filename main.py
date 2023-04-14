@@ -174,6 +174,6 @@ def get_recommendation(titulo: str):
             continue
         peliculas_recomendadas.append(df_peliculas.iloc[i]['title'])
 
-    return (peliculas_recomendadas)
+    return {'recomendacion':peliculas_recomendadas}
 
     
