@@ -10,10 +10,10 @@ import numpy as np
 import sklearn
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
-
+import pickle
 
 df = pd.read_csv("df_complete")
-
+df_peliculas = pd.read_csv("df_titulos.csv")
 app = FastAPI()
 
 @app.get("/")
@@ -146,7 +146,7 @@ def get_contents(rating: str):
 @app.get("/get_recommendation/{titulo}")
 def get_recommendation(titulo: str):
     # Paso 1: Cargar los datos
-    df_peliculas = df
+    df_peliculas
 
     # Paso 2: Preprocesamiento
     # Convertir el nombre de las películas a minúsculas y remover los caracteres especiales
@@ -174,5 +174,5 @@ def get_recommendation(titulo: str):
             continue
         peliculas_recomendadas.append(df_peliculas.iloc[i]['title'])
 
-    return {'recomendacion':titulo}
-    # return {'recomendacion':peliculas_recomendadas}
+    return {'recomendacion':peliculas_recomendadas}
+
