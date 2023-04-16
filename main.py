@@ -11,6 +11,7 @@ import sklearn
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
+from sklearn.neighbors import NearestNeighbors
 
 df = pd.read_csv("df_complete")
 df_peliculas = pd.read_csv("df_titulos.csv")
@@ -176,3 +177,40 @@ def get_recommendation(titulo: str):
 
     return {'recomendacion':peliculas_recomendadas}
 
+
+# Probamos otra forma de hacerlo /get_recommendationB
+
+# Paso 1: Cargar los datos y realizar el preprocesamiento
+df_peliculas = df
+df_peliculas['title'] = df_peliculas['title'].str.lower().str.replace('[^\w\s]','')
+
+# Paso 2: Vectorizar los datos
+vectorizer = TfidfVectorizer()
+matriz_tfidf = vectorizer.fit_transform(df_peliculas['title'])
+
+# Paso 3: Entrenar el modelo
+similitud_cos = cosine_similarity(matriz_tfidf)
+modelo = NearestNeighbors(n_neighbors=6, algorithm='auto', metric='cosine')
+modelo.fit(matriz_tfidf)
+
+# Paso 4: Guardar el modelo entrenado
+import pickle
+with open('modelo.pkl', 'wb') as archivo:
+    pickle.dump(modelo, archivo)
+
+# Paso 5: Cargar el modelo entrenado y hacer una recomendación
+import pickle
+with open('modelo.pkl', 'rb') as archivo:
+    modelo = pickle.load(archivo)
+
+@app.get("/get_recommendationB/{titulo}")
+def get_recommendationB(titulo: str):
+    nombre_pelicula = titulo
+    indice_pelicula = df_peliculas[df_peliculas['title'] == nombre_pelicula].index[0]
+
+    _, indices = modelo.kneighbors(matriz_tfidf[indice_pelicula], n_neighbors=6)
+    peliculas_recomendadas = []
+    for indice in indices[0][1:]:
+        peliculas_recomendadas.append(df_peliculas.iloc[indice]['title'])
+
+    return {'recomendacion':peliculas_recomendadas}
