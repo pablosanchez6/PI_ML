@@ -182,16 +182,16 @@ def get_recommendation(titulo: str):
 
 # Paso 1: Cargar los datos y realizar el preprocesamiento
 df_peliculas = df
-df_peliculas['title'] = df_peliculas['title'].str.lower().str.replace('[^\w\s]','')
+#df_peliculas['title'] = df_peliculas['title'].str.lower().str.replace('[^\w\s]','')
 
 # Paso 2: Vectorizar los datos
 vectorizer = TfidfVectorizer()
 matriz_tfidf = vectorizer.fit_transform(df_peliculas['title'])
 
 # Paso 3: Entrenar el modelo
-similitud_cos = cosine_similarity(matriz_tfidf)
-modelo = NearestNeighbors(n_neighbors=6, algorithm='auto', metric='cosine')
-modelo.fit(matriz_tfidf)
+#similitud_cos = cosine_similarity(matriz_tfidf)
+#modelo = NearestNeighbors(n_neighbors=6, algorithm='auto', metric='cosine')
+#modelo.fit(matriz_tfidf)
 
 # Paso 4: Guardar el modelo entrenado
 # import pickle
