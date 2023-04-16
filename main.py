@@ -194,9 +194,9 @@ modelo = NearestNeighbors(n_neighbors=6, algorithm='auto', metric='cosine')
 modelo.fit(matriz_tfidf)
 
 # Paso 4: Guardar el modelo entrenado
-import pickle
-with open('modelo.pkl', 'wb') as archivo:
-    pickle.dump(modelo, archivo)
+# import pickle
+# with open('modelo.pkl', 'wb') as archivo:
+    # pickle.dump(modelo, archivo)
 
 # Paso 5: Cargar el modelo entrenado y hacer una recomendación
 import pickle
