@@ -11,7 +11,7 @@ import sklearn
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
-from sklearn.neighbors import NearestNeighbors
+from sklearn.decomposition import randomized_svd
 
 df = pd.read_csv("df_complete")
 df_peliculas = pd.read_csv("df_titulos.csv")
@@ -144,45 +144,7 @@ def get_contents(rating: str):
     return {'rating': rating, 'contenido': count}
 
 
-@app.get("/get_recommendation/{titulo}")
-def get_recommendation(titulo: str):
-    # Paso 1: Cargar los datos
-    df_peliculas
-
-    # Paso 2: Preprocesamiento
-    # Convertir el nombre de las películas a minúsculas y remover los caracteres especiales
-    df_peliculas['title'] = df_peliculas['title'].str.lower().str.replace('[^\w\s]','')
-
-    # Paso 3: Vectorización
-    vectorizer = TfidfVectorizer(stop_words=["english","spanish"], min_df=15,max_df=235)
-    matriz_tfidf = vectorizer.fit_transform(df_peliculas['title'].values.astype("U"))
-
-    # Paso 4: Calcular la similitud
-    similitud_cos = cosine_similarity(matriz_tfidf)
-
-    # Paso 5: Obtener las recomendaciones
-    nombre_pelicula = titulo
-    indice_pelicula = df_peliculas[df_peliculas['title'] == nombre_pelicula].index[0]
-
-    similitud_pelicula = list(enumerate(similitud_cos[indice_pelicula]))
-    similitud_pelicula_ordenada = sorted(similitud_pelicula, key=lambda x: x[1], reverse=True)
-
-    peliculas_recomendadas = []
-    for i, sim in similitud_pelicula_ordenada:
-        if len(peliculas_recomendadas) == 5:
-            break
-        if i == indice_pelicula:
-            continue
-        peliculas_recomendadas.append(df_peliculas.iloc[i]['title'])
-
-    return {'recomendacion':peliculas_recomendadas}
-
-
-
-from sklearn.decomposition import randomized_svd
-
-# Lectura de los datos
-df 
+# Recomendacion
 
 # Vectorización de los títulos
 vectorizer = TfidfVectorizer(stop_words='english')
@@ -191,15 +153,14 @@ X = vectorizer.fit_transform(df['title'])
 # Descomposición en valores singulares aleatorios (randomized SVD)
 u, s, vt = randomized_svd(X, n_components=100)
 
-
 # Cálculo de la similitud de coseno
 def cosine_similarities(x, y):
     return np.dot(x, y.T)
 
 # Recomendación de títulos similares
 
-@app.get("/get_recommendationB/{title}")
-def get_recommendationB(title):
+@app.get("/get_recommendation/{title}")
+def get_recommendation(title):
     # Vectorización del título de entrada
     title_vec = vectorizer.transform([title])
 
