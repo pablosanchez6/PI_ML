@@ -14,7 +14,7 @@ import pickle
 from sklearn.decomposition import randomized_svd
 
 df = pd.read_csv("df_complete")
-df_peliculas = pd.read_csv("df_titulos.csv")
+
 app = FastAPI()
 
 @app.get("/")
@@ -125,12 +125,11 @@ def get_actor(platform:str, year:int):
         'apariciones': actor_apariciones
     }
 
-
 @app.get('/prod_per_county/{tipo}/{pais}/{anio}')
 def prod_per_county(tipo: str, pais: str, anio: int):
     df_filtered = df.loc[(df['type'] == tipo) & (df['country'].str.contains(pais)) & (df['release_year'] == anio)]
     cantidad = df_filtered["show_id"].nunique()
-    return {'pais': pais, 'anio': anio, 'peliculas': cantidad}
+    return {'pais': pais, 'anio': anio, 'contenido': cantidad}
 
 
 
