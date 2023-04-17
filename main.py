@@ -154,8 +154,8 @@ def get_recommendation(titulo: str):
     df_peliculas['title'] = df_peliculas['title'].str.lower().str.replace('[^\w\s]','')
 
     # Paso 3: Vectorización
-    vectorizer = TfidfVectorizer()
-    matriz_tfidf = vectorizer.fit_transform(df_peliculas['title'])
+    vectorizer = TfidfVectorizer(stop_words=["english","spanish"], min_df=15,max_df=235)
+    matriz_tfidf = vectorizer.fit_transform(df_peliculas['title'].values.astype("U"))
 
     # Paso 4: Calcular la similitud
     similitud_cos = cosine_similarity(matriz_tfidf)
@@ -178,39 +178,44 @@ def get_recommendation(titulo: str):
     return {'recomendacion':peliculas_recomendadas}
 
 
-# Probamos otra forma de hacerlo /get_recommendationB
 
-# Paso 1: Cargar los datos y realizar el preprocesamiento
-df_peliculas = df
-#df_peliculas['title'] = df_peliculas['title'].str.lower().str.replace('[^\w\s]','')
+from sklearn.decomposition import randomized_svd
 
-# Paso 2: Vectorizar los datos
-vectorizer = TfidfVectorizer()
-matriz_tfidf = vectorizer.fit_transform(df_peliculas['title'])
+# Lectura de los datos
+df 
 
-# Paso 3: Entrenar el modelo
-#similitud_cos = cosine_similarity(matriz_tfidf)
-#modelo = NearestNeighbors(n_neighbors=6, algorithm='auto', metric='cosine')
-#modelo.fit(matriz_tfidf)
+# Vectorización de los títulos
+vectorizer = TfidfVectorizer(stop_words='english')
+X = vectorizer.fit_transform(df['title'])
 
-# Paso 4: Guardar el modelo entrenado
-# import pickle
-# with open('modelo.pkl', 'wb') as archivo:
-    # pickle.dump(modelo, archivo)
+# Descomposición en valores singulares aleatorios (randomized SVD)
+u, s, vt = randomized_svd(X, n_components=100)
 
-# Paso 5: Cargar el modelo entrenado y hacer una recomendación
-import pickle
-with open('modelo.pkl', 'rb') as archivo:
-    modelo = pickle.load(archivo)
 
-@app.get("/get_recommendationB/{titulo}")
-def get_recommendationB(titulo: str):
-    nombre_pelicula = titulo
-    indice_pelicula = df_peliculas[df_peliculas['title'] == nombre_pelicula].index[0]
+# Cálculo de la similitud de coseno
+def cosine_similarities(x, y):
+    return np.dot(x, y.T)
 
-    _, indices = modelo.kneighbors(matriz_tfidf[indice_pelicula], n_neighbors=6)
-    peliculas_recomendadas = []
-    for indice in indices[0][1:]:
-        peliculas_recomendadas.append(df_peliculas.iloc[indice]['title'])
+# Recomendación de títulos similares
 
-    return {'recomendacion':peliculas_recomendadas}
+@app.get("/get_recommendationB/{title}")
+def get_recommendationB(title):
+    # Vectorización del título de entrada
+    title_vec = vectorizer.transform([title])
+
+    # Reducción de dimensionalidad del título de entrada
+    title_vec_reduced = title_vec.dot(vt.T)
+
+    # Cálculo de la similitud de coseno
+    sim = cosine_similarities(title_vec_reduced, u.dot(np.diag(s)))
+
+    # Ordenamiento de los títulos según su similitud de coseno
+    sim_scores = list(enumerate(sim[0]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+
+    # Recomendación de títulos similares
+    sim_scores = sim_scores[1:6]
+    indices = [i[0] for i in sim_scores]
+    titles = df.iloc[indices]['title']
+
+    return {'recomendacion':titles.tolist()}
