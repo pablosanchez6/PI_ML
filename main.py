@@ -53,12 +53,9 @@ def get_score_count(platform: str, scored: float, year: int):
     
     # Filtrar los registros para obtener solo las películas
     df_movies = df_filtered.loc[df['type'] == 'movie']
-    
-    # Filtrar los registros para obtener solo las películas que no son documentales
-    df_no_doc = df_movies[~df_movies['listed_in'].str.contains('documentary', regex=False)]
-    
+       
     # Filtrar los registros para obtener solo las películas que se encuentran en la plataforma especificada
-    df_platform = df_no_doc.loc[df['platform'] == platform]
+    df_platform = df_movies.loc[df['platform'] == platform]
     
     # Contar el número de registros que cumplen los criterios anteriores
     count = len(df_platform)
@@ -75,12 +72,9 @@ def get_count_platform(platform:str):
    
     # Filtrar los registros para obtener solo las películas
     df_movies = df.loc[df['type'] == 'movie']
-    
-    # Filtrar los registros para obtener solo las películas que no son documentales
-    df_no_doc = df_movies[~df_movies['listed_in'].str.contains('documentary', regex=False)]
-    
+        
     # Filtrar los registros para obtener solo las películas que se encuentran en la plataforma especificada
-    df_platform = df_no_doc.loc[df['platform'] == platform]
+    df_platform = df_movies.loc[df['platform'] == platform]
     
     # Contar el número de registros que cumplen los criterios anteriores
     count = len(df_platform)
